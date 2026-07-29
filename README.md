@@ -16,6 +16,11 @@ Both callbacks receive a loader-neutral `OverlayCanvas`. Map callbacks also
 receive the current camera, scale, dimension string, and world-to-screen helper
 methods. A registration is an `AutoCloseable`; close it to unregister.
 
+`MapOverlayContext.dimension()` is a canonical Minecraft dimension key in
+`namespace:path` form, for example `minecraft:overworld` or
+`minecraft:the_nether`. It returns `unknown` only when Xaero has not exposed a
+viewed dimension yet.
+
 ```java
 XaeroWorldMapBridge.registerMapOverlay("example:claims", 100, context -> {
     int x = context.worldToScreenX(128.0);
@@ -39,9 +44,15 @@ The bridge has two map-layer paths:
    internal anchor, but map overlays will then be above Xaero's UI. UI overlays
    always render at the tail by design.
 
-Fabric exposes `Map overlay`, `UI overlay`, and `Map injection` in Mod Menu.
-Mod Menu is Fabric-only; NeoForge artifacts use the same persisted properties
-file but intentionally do not claim a Mod Menu integration.
+Fabric exposes `Map overlay`, `UI overlay`, and `Map injection` in Mod Menu when
+Mod Menu is installed. Mod Menu is optional and Fabric-only; NeoForge artifacts
+use the same persisted properties file but intentionally do not claim a Mod
+Menu integration.
+
+The pass-start and pass-tail hooks are required on every supported target. The
+exact map-layer hook is allowed to miss so tail fallback remains possible. In
+exact-only mode, the bridge reports the first missing exact hook instead of
+silently dropping registered map overlays.
 
 ## Supported targets
 
@@ -69,6 +80,39 @@ published Xaero Fabric build for Minecraft 26.3, so it is intentionally absent.
 `buildAll` builds the complete six-target matrix. Each output is kept in its
 target module's `build/libs` directory.
 
+## Tests
+
+Loader-neutral unit tests cover coordinate conversion, registry ordering and
+isolation, registration lifecycle, settings persistence, and distribution
+metadata:
+
+```powershell
+.\gradlew.bat testAll
+```
+
+The graphical integration suite is intentionally local-only. It runs a Fabric
+Client GameTest for every Minecraft target, creates an isolated single-player
+world, opens Xaero's map, verifies both callbacks and their contexts, checks
+enable/disable and unregister behavior, and asserts that both overlay colors
+are present in a screenshot. It then starts every NeoForge target long enough
+to verify mod discovery and a clean client startup:
+
+```powershell
+.\gradlew.bat localIntegration
+```
+
+Fabric screenshots are stored under each target's
+`build/run/clientGameTest/screenshots` directory. NeoForge startup checks can
+also be run separately:
+
+```powershell
+.\gradlew.bat localNeoForgeSmoke
+```
+
+Client integration tests are not part of GitHub Actions because they require a
+graphical Minecraft client. Unit tests, all six builds, and published Xaero
+anchor verification remain automated in CI.
+
 ## Xaero compatibility verification
 
 Xaero does not document the map-layer insertion point as a public API. The
@@ -88,11 +132,16 @@ published artifact in the supported 1.40--1.44 matrix, run:
 ```
 
 The verification script downloads the artifacts from Modrinth, disassembles
-`xaero.map.gui.GuiMap` with `javap`, and checks the exact anchor expected by
-each Minecraft/loader adapter. CI runs it on a schedule and on demand.
+`xaero.map.gui.GuiMap` with `javap`, locates the relevant render method, and
+requires exactly one complete invocation descriptor matching the adapter's
+Mixin anchor. CI runs it on a schedule and on demand.
 
 ## CI/CD
 
 GitHub Actions builds each Fabric and NeoForge target independently. A second
 workflow validates every published Xaero artifact. Tagging a version such as
 `v0.1.0` builds the matrix and uploads all JARs to a GitHub release.
+
+Contribution, changelog, and commit-message conventions are documented in
+[`CONTRIBUTING.md`](CONTRIBUTING.md). User-visible changes are recorded in
+[`CHANGELOG.md`](CHANGELOG.md).

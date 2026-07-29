@@ -2,17 +2,20 @@ package io.github.billstark001.xaerobridge.platform;
 
 import io.github.billstark001.xaerobridge.api.MapOverlayContext;
 import io.github.billstark001.xaerobridge.api.UiOverlayContext;
+import io.github.billstark001.xaerobridge.internal.BridgeLog;
 import io.github.billstark001.xaerobridge.internal.BridgeSettings;
 import io.github.billstark001.xaerobridge.internal.OverlayRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceKey;
 
 import java.lang.reflect.Field;
 
 /** Minecraft 1.21.11 render adapter. */
 public final class BridgeRenderer {
     private static boolean exactRendered;
+    private static boolean missingExactReported;
 
     private BridgeRenderer() {}
 
@@ -30,8 +33,14 @@ public final class BridgeRenderer {
     }
 
     public static void renderTail(Screen screen, GuiGraphics graphics, int width, int height) {
-        if (!exactRendered && BridgeSettings.isTailFallbackEnabled()) {
-            renderMap(screen, graphics, width, height);
+        if (!exactRendered && BridgeSettings.isMapOverlayEnabled() && OverlayRegistry.hasMapOverlays()) {
+            if (BridgeSettings.isTailFallbackEnabled()) {
+                renderMap(screen, graphics, width, height);
+            } else if (!missingExactReported) {
+                missingExactReported = true;
+                BridgeLog.warning("The exact Xaero map injection did not run. Map overlays are disabled for this "
+                        + "screen; enable tail fallback or install a supported Xaero version.");
+            }
         }
         if (BridgeSettings.isUiOverlayEnabled()) {
             OverlayRegistry.renderUi(new UiOverlayContext(graphics::fill, width, height));
@@ -55,7 +64,7 @@ public final class BridgeRenderer {
     private static String readDimension(Screen screen) {
         Object value = readField(screen, "lastViewedDimensionId");
         if (value == null) value = readField(screen, "lastNonNullViewedDimensionId");
-        return value == null ? "unknown" : value.toString();
+        return value instanceof ResourceKey<?> key ? key.identifier().toString() : "unknown";
     }
 
     private static double readNumber(Screen screen, String name) {

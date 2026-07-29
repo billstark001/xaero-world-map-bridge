@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Properties;
 
 /** Loader-neutral persisted settings used by the renderer and Fabric Mod Menu UI. */
@@ -20,16 +21,25 @@ public final class BridgeSettings {
 
     public static synchronized void initialize(Path configPath) {
         path = configPath;
-        if (configPath == null || !Files.isRegularFile(configPath)) return;
+        boolean nextMapOverlayEnabled = true;
+        boolean nextUiOverlayEnabled = true;
+        InjectionMode nextInjectionMode = InjectionMode.EXACT_ONLY;
+        if (configPath == null || !Files.isRegularFile(configPath)) {
+            apply(nextMapOverlayEnabled, nextUiOverlayEnabled, nextInjectionMode);
+            return;
+        }
         Properties properties = new Properties();
         try (InputStream input = Files.newInputStream(configPath)) {
             properties.load(input);
-            mapOverlayEnabled = Boolean.parseBoolean(properties.getProperty("mapOverlayEnabled", "true"));
-            uiOverlayEnabled = Boolean.parseBoolean(properties.getProperty("uiOverlayEnabled", "true"));
-            injectionMode = InjectionMode.valueOf(properties.getProperty("injectionMode", "EXACT_ONLY"));
+            nextMapOverlayEnabled = parseBoolean(properties, "mapOverlayEnabled", true);
+            nextUiOverlayEnabled = parseBoolean(properties, "uiOverlayEnabled", true);
+            nextInjectionMode = InjectionMode.valueOf(properties.getProperty("injectionMode", "EXACT_ONLY"));
         } catch (IOException | IllegalArgumentException error) {
-            System.err.println("[Xaero World Map Bridge] Failed to load settings: " + error);
+            BridgeLog.error("Failed to load settings from " + configPath, error);
+            apply(true, true, InjectionMode.EXACT_ONLY);
+            return;
         }
+        apply(nextMapOverlayEnabled, nextUiOverlayEnabled, nextInjectionMode);
     }
 
     public static synchronized void save() {
@@ -39,13 +49,28 @@ public final class BridgeSettings {
         properties.setProperty("uiOverlayEnabled", Boolean.toString(uiOverlayEnabled));
         properties.setProperty("injectionMode", injectionMode.name());
         try {
-            Files.createDirectories(path.getParent());
+            Path parent = path.toAbsolutePath().getParent();
+            if (parent != null) Files.createDirectories(parent);
             try (OutputStream output = Files.newOutputStream(path)) {
                 properties.store(output, "Xaero World Map Bridge settings");
             }
         } catch (IOException error) {
-            System.err.println("[Xaero World Map Bridge] Failed to save settings: " + error);
+            BridgeLog.error("Failed to save settings to " + path, error);
         }
+    }
+
+    private static boolean parseBoolean(Properties properties, String key, boolean defaultValue) {
+        String value = properties.getProperty(key);
+        if (value == null) return defaultValue;
+        if ("true".equalsIgnoreCase(value)) return true;
+        if ("false".equalsIgnoreCase(value)) return false;
+        throw new IllegalArgumentException("Invalid boolean value for " + key + ": " + value);
+    }
+
+    private static void apply(boolean mapEnabled, boolean uiEnabled, InjectionMode mode) {
+        mapOverlayEnabled = mapEnabled;
+        uiOverlayEnabled = uiEnabled;
+        injectionMode = mode;
     }
 
     public static boolean isMapOverlayEnabled() { return mapOverlayEnabled; }
@@ -54,5 +79,7 @@ public final class BridgeSettings {
     public static InjectionMode injectionMode() { return injectionMode; }
     public static void setMapOverlayEnabled(boolean value) { mapOverlayEnabled = value; }
     public static void setUiOverlayEnabled(boolean value) { uiOverlayEnabled = value; }
-    public static void setInjectionMode(InjectionMode value) { injectionMode = value; }
+    public static void setInjectionMode(InjectionMode value) {
+        injectionMode = Objects.requireNonNull(value, "value");
+    }
 }

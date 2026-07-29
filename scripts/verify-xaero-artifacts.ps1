@@ -11,9 +11,30 @@ $downloadRoot = Join-Path $outputRoot "artifacts"
 New-Item -ItemType Directory -Force -Path $downloadRoot | Out-Null
 
 $targets = @(
-    @{ Minecraft = "1.21.11"; Minors = @(40, 41, 42, 43, 44); MojmapAnchor = "MultiBufferSource`$BufferSource"; FabricRawAnchor = "class_4597`$class_4598" },
-    @{ Minecraft = "26.1.2"; Minors = @(40, 41, 42, 43, 44); MojmapAnchor = "MultiBufferSource`$BufferSource"; FabricRawAnchor = "MultiBufferSource`$BufferSource" },
-    @{ Minecraft = "26.2"; Minors = @(41, 42, 43, 44); MojmapAnchor = "XaeroBufferProvider"; FabricRawAnchor = "XaeroBufferProvider" }
+    @{
+        Minecraft = "1.21.11"
+        Minors = @(40, 41, 42, 43, 44)
+        FabricRenderMethod = "method_25394"
+        NeoForgeRenderMethod = "render"
+        FabricDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lnet/minecraft/class_4597$class_4598;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/class_310;F)Lxaero/map/element/HoveredMapElementHolder;'
+        NeoForgeDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
+    },
+    @{
+        Minecraft = "26.1.2"
+        Minors = @(40, 41, 42, 43, 44)
+        FabricRenderMethod = "extractRenderState"
+        NeoForgeRenderMethod = "extractRenderState"
+        FabricDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
+        NeoForgeDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
+    },
+    @{
+        Minecraft = "26.2"
+        Minors = @(41, 42, 43, 44)
+        FabricRenderMethod = "extractRenderState"
+        NeoForgeRenderMethod = "extractRenderState"
+        FabricDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lxaero/lib/client/graphics/XaeroBufferProvider;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
+        NeoForgeDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lxaero/lib/client/graphics/XaeroBufferProvider;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
+    }
 )
 
 $loaders = if ($Loader -eq "all") { @("fabric", "neoforge") } else { @($Loader) }
@@ -48,11 +69,40 @@ foreach ($target in $targets) {
                     Invoke-WebRequest -Headers $headers -Uri $file.url -OutFile $jar
                 }
 
-                $disassembly = & $javap -classpath $jar -c -p xaero.map.gui.GuiMap 2>&1 | Out-String
-                $anchor = if ($targetLoader -eq "fabric") { $target.FabricRawAnchor } else { $target.MojmapAnchor }
-                if ($disassembly -notmatch [regex]::Escape("MapElementRenderHandler.render") -or
-                    $disassembly -notmatch [regex]::Escape($anchor)) {
-                    $failures.Add("Exact anchor changed in $($version.version_number) ($targetLoader / $($target.Minecraft))")
+                $disassemblyLines = @(& $javap -classpath $jar -c -p xaero.map.gui.GuiMap 2>&1)
+                $renderMethod = if ($targetLoader -eq "fabric") {
+                    $target.FabricRenderMethod
+                } else {
+                    $target.NeoForgeRenderMethod
+                }
+                $methodStart = -1
+                for ($lineIndex = 0; $lineIndex -lt $disassemblyLines.Count; $lineIndex++) {
+                    if ($disassemblyLines[$lineIndex] -match "^\s*public void $([regex]::Escape($renderMethod))\(") {
+                        $methodStart = $lineIndex
+                        break
+                    }
+                }
+                if ($methodStart -lt 0) {
+                    $failures.Add("Missing $renderMethod in $($version.version_number) ($targetLoader / $($target.Minecraft))")
+                    continue
+                }
+
+                $methodEnd = $disassemblyLines.Count
+                for ($lineIndex = $methodStart + 1; $lineIndex -lt $disassemblyLines.Count; $lineIndex++) {
+                    if ($disassemblyLines[$lineIndex] -match "^\s{2}(public|protected|private) .+;\s*$") {
+                        $methodEnd = $lineIndex
+                        break
+                    }
+                }
+                $methodBody = ($disassemblyLines[$methodStart..($methodEnd - 1)] -join " ") -replace "\s+", " "
+                $descriptor = if ($targetLoader -eq "fabric") {
+                    $target.FabricDescriptor
+                } else {
+                    $target.NeoForgeDescriptor
+                }
+                $anchorCount = [regex]::Matches($methodBody, [regex]::Escape($descriptor)).Count
+                if ($anchorCount -ne 1) {
+                    $failures.Add("Expected exactly one exact anchor, found $anchorCount in $($version.version_number) ($targetLoader / $($target.Minecraft))")
                     continue
                 }
                 Write-Host "Verified $($version.version_number) ($targetLoader / $($target.Minecraft))"

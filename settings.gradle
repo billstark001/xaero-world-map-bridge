@@ -16,6 +16,7 @@ plugins {
 rootProject.name = "xaero-world-map-bridge"
 
 include(
+    "tests:unit",
     "versions:fabric-1.21.11",
     "versions:fabric-26.1.2",
     "versions:fabric-26.2",
