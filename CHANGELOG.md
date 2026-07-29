@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- MIT license, a Modrinth-ready project description, and a one-command script that builds every target and collects the six distributable JARs in `build/modrinth`.
+
 ## [0.1.0] - 2026-07-29
 
 ### Added

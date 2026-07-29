@@ -59,6 +59,12 @@ Xaero World Map 1.40 was not published for Minecraft 26.2. Minecraft 26.3 is exc
 
 `buildAll` builds the complete six-target matrix. Each output is stored in its target module's `build/libs` directory.
 
+For a Modrinth release, the following command builds every target and collects the six distributable JARs in the root [`build/modrinth`](build/modrinth) directory. Source, development, and Javadoc JARs are excluded.
+
+```powershell
+.\scripts\build-modrinth.ps1
+```
+
 ## Tests
 
 Loader-neutral unit tests cover coordinate conversion, registry ordering and isolation, registration lifecycle, settings persistence, and distribution metadata:
