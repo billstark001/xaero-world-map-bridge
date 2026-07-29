@@ -13,6 +13,13 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    xaeroBundle {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
 def sharedJavaSources = [
     rootProject.file("src/main/java"),
     rootProject.file("versions/shared-mc-${target.minecraft}/src/main/java"),
@@ -44,8 +51,24 @@ loom {
     }
 }
 
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "xaero_world_map_bridge_gametest"
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
+}
+
+sourceSets.named("gametest") {
+    java.srcDirs = [rootProject.file("versions/fabric-gametest/src/gametest/java")]
+    resources.srcDirs = [rootProject.file("versions/fabric-gametest/src/gametest/resources")]
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${target.minecraft}"
+    xaeroBundle "maven.modrinth:xaeros-world-map:${target.xaeroFabric}"
 
     if (target.remappedFabric) {
         mappings loom.officialMojangMappings()
@@ -58,6 +81,50 @@ dependencies {
         implementation "net.fabricmc.fabric-api:fabric-api:${target.fabricApi}"
         implementation "com.terraformersmc:modmenu:${target.modMenu}"
         implementation "maven.modrinth:xaeros-world-map:${target.xaeroFabric}"
+    }
+}
+
+if (target.remappedFabric) {
+    // Loom remaps the 1.21.11 outer Xaero JAR but does not expose its
+    // embedded XaeroLib JAR to the named development runtime. Extract the
+    // immutable nested artifact before Loom resolves modRuntimeOnly so Loom
+    // can remap XaeroLib along with the outer mod.
+    def xaeroBundleFile = configurations.xaeroBundle.singleFile
+    def xaeroLibDirectory = rootProject.file(
+        ".gradle/xaero-nested/${target.minecraft}/${target.xaeroFabric}"
+    )
+    def xaeroLibFile = new File(xaeroLibDirectory, "xaerolib.jar")
+
+    new java.util.zip.ZipFile(xaeroBundleFile).withCloseable { archive ->
+        def matches = java.util.Collections.list(archive.entries()).findAll {
+            !it.directory && it.name ==~ /META-INF\/jars\/xaerolib-.*\.jar/
+        }
+        if (matches.size() != 1) {
+            throw new GradleException(
+                "Expected exactly one embedded XaeroLib JAR in ${xaeroBundleFile.name}, " +
+                "found ${matches.size()}"
+            )
+        }
+
+        def nestedEntry = matches[0]
+        if (!xaeroLibFile.isFile() || xaeroLibFile.length() != nestedEntry.size) {
+            xaeroLibDirectory.mkdirs()
+            def temporaryFile = new File(xaeroLibDirectory, "xaerolib.jar.tmp")
+            archive.getInputStream(nestedEntry).withCloseable { input ->
+                temporaryFile.withOutputStream { output -> input.transferTo(output) }
+            }
+            java.nio.file.Files.move(
+                temporaryFile.toPath(),
+                xaeroLibFile.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+            )
+        }
+    }
+
+    dependencies {
+        // XaeroLib must be on the remap/compile classpath, not just runtime:
+        // GuiMap inherits Minecraft members through XaeroLib's ScreenBase.
+        modImplementation files(xaeroLibFile)
     }
 }
 

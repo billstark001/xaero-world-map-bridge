@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /** Internal registry implementation. */
@@ -23,7 +24,7 @@ public final class OverlayRegistry {
 
     public static OverlayRegistration registerMap(String id, int order, MapOverlayRenderer renderer) {
         validateId(id);
-        MapEntry entry = new MapEntry(id, order, NEXT_SEQUENCE.getAndIncrement(), renderer);
+        MapEntry entry = new MapEntry(id, order, NEXT_SEQUENCE.getAndIncrement(), renderer, new AtomicBoolean());
         if (MAP.putIfAbsent(id, entry) != null) {
             throw new IllegalArgumentException("A map overlay is already registered for " + id);
         }
@@ -32,7 +33,7 @@ public final class OverlayRegistry {
 
     public static OverlayRegistration registerUi(String id, int order, UiOverlayRenderer renderer) {
         validateId(id);
-        UiEntry entry = new UiEntry(id, order, NEXT_SEQUENCE.getAndIncrement(), renderer);
+        UiEntry entry = new UiEntry(id, order, NEXT_SEQUENCE.getAndIncrement(), renderer, new AtomicBoolean());
         if (UI.putIfAbsent(id, entry) != null) {
             throw new IllegalArgumentException("A UI overlay is already registered for " + id);
         }
@@ -44,7 +45,9 @@ public final class OverlayRegistry {
             try {
                 entry.renderer.render(context);
             } catch (RuntimeException error) {
-                System.err.println("[Xaero World Map Bridge] Map overlay '" + entry.id + "' failed: " + error);
+                if (entry.failureLogged.compareAndSet(false, true)) {
+                    BridgeLog.error("Map overlay '" + entry.id + "' failed; suppressing repeated reports", error);
+                }
             }
         }
     }
@@ -54,9 +57,15 @@ public final class OverlayRegistry {
             try {
                 entry.renderer.render(context);
             } catch (RuntimeException error) {
-                System.err.println("[Xaero World Map Bridge] UI overlay '" + entry.id + "' failed: " + error);
+                if (entry.failureLogged.compareAndSet(false, true)) {
+                    BridgeLog.error("UI overlay '" + entry.id + "' failed; suppressing repeated reports", error);
+                }
             }
         }
+    }
+
+    public static boolean hasMapOverlays() {
+        return !MAP.isEmpty();
     }
 
     private static <T extends Entry> List<T> sorted(Iterable<T> entries) {
@@ -78,6 +87,8 @@ public final class OverlayRegistry {
         long sequence();
     }
 
-    private record MapEntry(String id, int order, long sequence, MapOverlayRenderer renderer) implements Entry {}
-    private record UiEntry(String id, int order, long sequence, UiOverlayRenderer renderer) implements Entry {}
+    private record MapEntry(String id, int order, long sequence, MapOverlayRenderer renderer,
+                            AtomicBoolean failureLogged) implements Entry {}
+    private record UiEntry(String id, int order, long sequence, UiOverlayRenderer renderer,
+                           AtomicBoolean failureLogged) implements Entry {}
 }

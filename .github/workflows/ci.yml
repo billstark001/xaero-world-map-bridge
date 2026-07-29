@@ -7,6 +7,17 @@ on:
   workflow_dispatch:
 
 jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew testAll --stacktrace
+
   build:
     strategy:
       fail-fast: false
@@ -14,27 +25,39 @@ jobs:
         target:
           - module: versions:fabric-1.21.11
             java: "21"
+            artifact: versions-fabric-1.21.11
+            artifactPath: versions/fabric-1.21.11
           - module: versions:fabric-26.1.2
             java: "25"
+            artifact: versions-fabric-26.1.2
+            artifactPath: versions/fabric-26.1.2
           - module: versions:fabric-26.2
             java: "25"
+            artifact: versions-fabric-26.2
+            artifactPath: versions/fabric-26.2
           - module: versions:neoforge-1.21.11
             java: "21"
+            artifact: versions-neoforge-1.21.11
+            artifactPath: versions/neoforge-1.21.11
           - module: versions:neoforge-26.1.2
             java: "25"
+            artifact: versions-neoforge-26.1.2
+            artifactPath: versions/neoforge-26.1.2
           - module: versions:neoforge-26.2
             java: "25"
+            artifact: versions-neoforge-26.2
+            artifactPath: versions/neoforge-26.2
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ matrix.target.java }}
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew :${{ matrix.target.module }}:build --stacktrace
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
-          name: ${{ replace(matrix.target.module, ':', '-') }}
-          path: ${{ matrix.target.module }}/build/libs/*.jar
+          name: ${{ matrix.target.artifact }}
+          path: ${{ matrix.target.artifactPath }}/build/libs/*.jar
           if-no-files-found: error

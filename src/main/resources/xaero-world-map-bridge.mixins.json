@@ -4,6 +4,6 @@
   "compatibilityLevel": "${mixinJava}",
   "client": ["XaeroGuiMapMixin"],
   "injectors": {
-    "defaultRequire": 0
+    "defaultRequire": 1
   }
 }

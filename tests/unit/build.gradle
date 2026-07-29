@@ -1,0 +1,38 @@
+plugins {
+    id "java"
+}
+
+sourceSets {
+    main {
+        java.srcDirs = [rootProject.file("src/main/java")]
+        resources.srcDirs = []
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty "xaeroBridge.projectRoot", rootProject.projectDir.absolutePath
+    testLogging {
+        events "failed", "skipped"
+        exceptionFormat "full"
+    }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}

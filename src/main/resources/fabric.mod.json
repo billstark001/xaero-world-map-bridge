@@ -17,7 +17,9 @@
     "minecraft": "${minecraftRange}",
     "java": ">=${javaVersion}",
     "fabric-api": "*",
-    "xaeroworldmap": ">=1.40.0 <1.45.0",
+    "xaeroworldmap": ">=1.40.0 <1.45.0"
+  },
+  "suggests": {
     "modmenu": "*"
   }
 }

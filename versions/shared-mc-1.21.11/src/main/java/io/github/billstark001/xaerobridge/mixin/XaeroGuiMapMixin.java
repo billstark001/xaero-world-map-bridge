@@ -30,13 +30,18 @@ public abstract class XaeroGuiMapMixin {
         BridgeRenderer.renderTail(screen, graphics, screen.width, screen.height);
     }
 
-    @Inject(method = "render", at = @At(value = "HEAD", remap = false), remap = false, require = 0)
+    @Inject(
+            method = {"render", "method_25394"},
+            at = @At(value = "HEAD", remap = false),
+            remap = false,
+            require = 1
+    )
     private void xaeroBridge$begin(GuiGraphics graphics, int mouseX, int mouseY,
                                    float delta, CallbackInfo callback) {
         BridgeRenderer.beginPass();
     }
 
-    @Inject(method = "render", at = @At(
+    @Inject(method = {"render", "method_25394"}, at = @At(
             value = "INVOKE",
             target = "Lxaero/map/element/MapElementRenderHandler;render(Lxaero/map/gui/GuiMap;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;",
             shift = At.Shift.BEFORE,
@@ -47,7 +52,12 @@ public abstract class XaeroGuiMapMixin {
         xaeroBridge$exact(graphics);
     }
 
-    @Inject(method = "render", at = @At(value = "TAIL", remap = false), remap = false, require = 0)
+    @Inject(
+            method = {"render", "method_25394"},
+            at = @At(value = "TAIL", remap = false),
+            remap = false,
+            require = 1
+    )
     private void xaeroBridge$tailLayer(GuiGraphics graphics, int mouseX, int mouseY,
                                        float delta, CallbackInfo callback) {
         xaeroBridge$tail(graphics);
