@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - module: versions:fabric-1.21.11
+            java: "21"
+          - module: versions:fabric-26.1.2
+            java: "25"
+          - module: versions:fabric-26.2
+            java: "25"
+          - module: versions:neoforge-1.21.11
+            java: "21"
+          - module: versions:neoforge-26.1.2
+            java: "25"
+          - module: versions:neoforge-26.2
+            java: "25"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.target.java }}
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew :${{ matrix.target.module }}:build --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ replace(matrix.target.module, ':', '-') }}
+          path: ${{ matrix.target.module }}/build/libs/*.jar
+          if-no-files-found: error

@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "io.github.billstark001.xaerobridge.mixin",
+  "compatibilityLevel": "${mixinJava}",
+  "client": ["XaeroGuiMapMixin"],
+  "injectors": { "defaultRequire": 0 }
+}

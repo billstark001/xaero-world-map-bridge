@@ -1,0 +1,25 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "org.gradle.toolchains.foojay-resolver-convention" version "0.8.0"
+}
+
+rootProject.name = "xaero-world-map-bridge"
+
+include(
+    "versions:fabric-1.21.11",
+    "versions:fabric-26.1.2",
+    "versions:fabric-26.2",
+    "versions:neoforge-1.21.11",
+    "versions:neoforge-26.1.2",
+    "versions:neoforge-26.2"
+)

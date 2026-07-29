@@ -1,0 +1,92 @@
+def target = rootProject.ext.targets[project.ext.minecraftTarget]
+
+group = rootProject.mod_group
+version = "${rootProject.mod_version}+${target.minecraft}-neoforge"
+
+base {
+    archivesName = rootProject.archives_base_name
+}
+
+repositories {
+    maven { url = "https://api.modrinth.com/maven" }
+    mavenCentral()
+}
+
+def sharedJavaSources = [
+    rootProject.file("src/main/java"),
+    rootProject.file("versions/shared-mc-${target.minecraft}/src/main/java"),
+    rootProject.file("versions/neoforge-common/src/main/java"),
+    project.file("src/main/java")
+]
+if (target.modernRenderer) {
+    sharedJavaSources.add(1, rootProject.file("versions/shared-modern/src/main/java"))
+}
+
+sourceSets {
+    main {
+        java.srcDirs = sharedJavaSources
+    }
+}
+
+neoForge {
+    // Avoid source decompilation/recompilation in local and CI matrix builds.
+    // The bridge only needs the published NeoForge API and mapped game classes.
+    enable {
+        version = target.neoForge
+        disableRecompilation = true
+    }
+    runs {
+        client {
+            client()
+            gameDirectory = rootProject.file("run/neoforge-${target.minecraft}")
+        }
+    }
+    mods {
+        "xaero_world_map_bridge" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    localRuntime "maven.modrinth:xaeros-world-map:${target.xaeroNeoForge}"
+}
+
+def resourceProperties = [
+    version        : project.version,
+    minecraftRange : target.minecraftRange,
+    minecraftNeoRange: target.minecraftNeoRange,
+    mixinJava      : target.mixinJava,
+    neoForgeVersion: target.neoForge
+]
+
+processResources {
+    inputs.properties(resourceProperties)
+    filesMatching("META-INF/neoforge.mods.toml") { expand(resourceProperties) }
+    filesMatching("xaero-world-map-bridge.mixins.json") { expand(resourceProperties) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.release = target.javaVersion
+}
+
+java {
+    withSourcesJar()
+    toolchain.languageVersion = JavaLanguageVersion.of(target.javaVersion)
+    sourceCompatibility = JavaVersion.toVersion(target.javaVersion)
+    targetCompatibility = JavaVersion.toVersion(target.javaVersion)
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = rootProject.archives_base_name
+            from components.java
+        }
+    }
+}

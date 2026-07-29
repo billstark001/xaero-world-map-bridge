@@ -1,0 +1,96 @@
+def target = rootProject.ext.targets[project.ext.minecraftTarget]
+
+group = rootProject.mod_group
+version = "${rootProject.mod_version}+${target.minecraft}-fabric"
+
+base {
+    archivesName = rootProject.archives_base_name
+}
+
+repositories {
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+    maven { url = "https://api.modrinth.com/maven" }
+    mavenCentral()
+}
+
+def sharedJavaSources = [
+    rootProject.file("src/main/java"),
+    rootProject.file("versions/shared-mc-${target.minecraft}/src/main/java"),
+    rootProject.file("versions/fabric-common/src/main/java"),
+    project.file("src/main/java")
+]
+if (target.modernRenderer) {
+    sharedJavaSources.add(1, rootProject.file("versions/shared-modern/src/main/java"))
+}
+
+sourceSets {
+    main {
+        java.srcDirs = sharedJavaSources
+        resources.srcDirs = [rootProject.file("src/main/resources")]
+    }
+}
+
+loom {
+    mods {
+        "xaero_world_map_bridge" {
+            sourceSet sourceSets.main
+        }
+    }
+    runs {
+        client {
+            client()
+            runDir = rootProject.file("run/fabric-${target.minecraft}").absolutePath
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${target.minecraft}"
+
+    if (target.remappedFabric) {
+        mappings loom.officialMojangMappings()
+        modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${target.fabricApi}"
+        modImplementation "com.terraformersmc:modmenu:${target.modMenu}"
+        modImplementation "maven.modrinth:xaeros-world-map:${target.xaeroFabric}"
+    } else {
+        implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+        implementation "net.fabricmc.fabric-api:fabric-api:${target.fabricApi}"
+        implementation "com.terraformersmc:modmenu:${target.modMenu}"
+        implementation "maven.modrinth:xaeros-world-map:${target.xaeroFabric}"
+    }
+}
+
+def resourceProperties = [
+    version            : project.version,
+    minecraftRange     : target.minecraftRange,
+    javaVersion        : target.javaVersion,
+    mixinJava          : target.mixinJava
+]
+
+processResources {
+    inputs.properties(resourceProperties)
+    filesMatching("fabric.mod.json") { expand(resourceProperties) }
+    filesMatching("xaero-world-map-bridge.mixins.json") { expand(resourceProperties) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.release = target.javaVersion
+}
+
+java {
+    withSourcesJar()
+    toolchain.languageVersion = JavaLanguageVersion.of(target.javaVersion)
+    sourceCompatibility = JavaVersion.toVersion(target.javaVersion)
+    targetCompatibility = JavaVersion.toVersion(target.javaVersion)
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = rootProject.archives_base_name
+            from components.java
+        }
+    }
+}

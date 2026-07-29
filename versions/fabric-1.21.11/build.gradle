@@ -1,0 +1,8 @@
+plugins {
+    id "net.fabricmc.fabric-loom-remap"
+    id "maven-publish"
+}
+
+ext.minecraftTarget = "1.21.11"
+
+apply from: rootProject.file("gradle/fabric-target.gradle")

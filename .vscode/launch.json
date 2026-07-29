@@ -1,0 +1,71 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "neoforge-1.21.11 - Client",
+      "presentation": {
+        "group": "Mod Development - neoforge-1.21.11",
+        "order": 0
+      },
+      "projectName": "neoforge-1.21.11",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-1.21.11\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-1.21.11\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dxaero_world_map_bridge%%D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-1.21.11\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run\\neoforge-1.21.11",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "neoforge-26.1.2 - Client",
+      "presentation": {
+        "group": "Mod Development - neoforge-26.1.2",
+        "order": 0
+      },
+      "projectName": "neoforge-26.1.2",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.1.2\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.1.2\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dxaero_world_map_bridge%%D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.1.2\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run\\neoforge-26.1.2",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "neoforge-26.2 - Client",
+      "presentation": {
+        "group": "Mod Development - neoforge-26.2",
+        "order": 0
+      },
+      "projectName": "neoforge-26.2",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.2\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.2\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dxaero_world_map_bridge%%D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.2\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run\\neoforge-26.2",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}

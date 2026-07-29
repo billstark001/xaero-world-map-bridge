@@ -1,0 +1,8 @@
+plugins {
+    id "net.fabricmc.fabric-loom"
+    id "maven-publish"
+}
+
+ext.minecraftTarget = "26.2"
+
+apply from: rootProject.file("gradle/fabric-target.gradle")

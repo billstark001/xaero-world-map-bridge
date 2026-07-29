@@ -1,0 +1,19 @@
+name: Xaero Compatibility
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"
+
+jobs:
+  verify-published-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+      - name: Verify every published Xaero target
+        shell: pwsh
+        run: ./scripts/verify-xaero-artifacts.ps1

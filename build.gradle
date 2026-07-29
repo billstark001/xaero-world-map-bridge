@@ -1,0 +1,63 @@
+plugins {
+    id "net.fabricmc.fabric-loom" version "${loom_version}" apply false
+    id "net.fabricmc.fabric-loom-remap" version "${loom_version}" apply false
+    id "net.neoforged.moddev" version "${moddev_version}" apply false
+}
+
+ext.targets = [
+    "1.21.11": [
+        minecraft             : "1.21.11",
+        javaVersion           : 21,
+        fabricApi             : "0.141.4+1.21.11",
+        modMenu               : "17.0.1-beta.1",
+        xaeroFabric           : "uuPYtgMh",
+        xaeroNeoForge         : "73s8U0Yb",
+        neoForge              : "21.11.44",
+        minecraftRange        : "~1.21.11",
+        minecraftNeoRange     : "[1.21.11,1.21.12)",
+        mixinJava             : "JAVA_21",
+        remappedFabric        : true,
+        modernRenderer        : false
+    ],
+    "26.1.2": [
+        minecraft             : "26.1.2",
+        javaVersion           : 25,
+        fabricApi             : "0.151.0+26.1.2",
+        modMenu               : "18.0.0",
+        xaeroFabric           : "d81YYK5J",
+        xaeroNeoForge         : "ltX2ZaPs",
+        neoForge              : "26.1.2.87",
+        minecraftRange        : "~26.1.2",
+        minecraftNeoRange     : "[26.1.2,26.1.3)",
+        mixinJava             : "JAVA_25",
+        remappedFabric        : false,
+        modernRenderer        : true
+    ],
+    "26.2": [
+        minecraft             : "26.2",
+        javaVersion           : 25,
+        fabricApi             : "0.152.2+26.2",
+        modMenu               : "20.0.1",
+        xaeroFabric           : "NzjI8AbM",
+        xaeroNeoForge         : "pKatKnls",
+        neoForge              : "26.2.0.37-beta",
+        minecraftRange        : "~26.2",
+        minecraftNeoRange     : "[26.2,26.3)",
+        mixinJava             : "JAVA_25",
+        remappedFabric        : false,
+        modernRenderer        : true
+    ]
+]
+
+tasks.register("buildAll") {
+    group = "build"
+    description = "Builds every Fabric and NeoForge target."
+    dependsOn(
+        ":versions:fabric-1.21.11:build",
+        ":versions:fabric-26.1.2:build",
+        ":versions:fabric-26.2:build",
+        ":versions:neoforge-1.21.11:build",
+        ":versions:neoforge-26.1.2:build",
+        ":versions:neoforge-26.2:build"
+    )
+}

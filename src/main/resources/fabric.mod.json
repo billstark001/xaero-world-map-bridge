@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "xaero_world_map_bridge",
+  "version": "${version}",
+  "name": "Xaero World Map Bridge",
+  "description": "A small overlay API bridge for Xaero's World Map.",
+  "authors": ["billstark001"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["io.github.billstark001.xaerobridge.fabric.XaeroWorldMapBridgeFabricClient"],
+    "modmenu": ["io.github.billstark001.xaerobridge.fabric.XaeroWorldMapBridgeModMenu"]
+  },
+  "mixins": ["xaero-world-map-bridge.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "${minecraftRange}",
+    "java": ">=${javaVersion}",
+    "fabric-api": "*",
+    "xaeroworldmap": ">=1.40.0 <1.45.0",
+    "modmenu": "*"
+  }
+}

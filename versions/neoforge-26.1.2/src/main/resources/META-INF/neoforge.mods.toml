@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+license="MIT"
+
+[[mixins]]
+config="xaero-world-map-bridge.mixins.json"
+
+[[mods]]
+modId="xaero_world_map_bridge"
+version="${version}"
+displayName="Xaero World Map Bridge"
+description='''A small overlay API bridge for Xaero's World Map.'''
+
+[[dependencies.xaero_world_map_bridge]]
+modId="neoforge"
+type="required"
+versionRange="[${neoForgeVersion},)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.xaero_world_map_bridge]]
+modId="minecraft"
+type="required"
+versionRange="${minecraftNeoRange}"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.xaero_world_map_bridge]]
+modId="xaeroworldmap"
+type="required"
+versionRange="[1.40.0,1.45.0)"
+ordering="AFTER"
+side="CLIENT"
