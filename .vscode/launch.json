@@ -4,7 +4,7 @@
     {
       "type": "java",
       "request": "launch",
-      "name": "neoforge-1.21.11 - Client",
+      "name": "Minecraft Client NeoForge 1.21.11",
       "presentation": {
         "group": "Mod Development - neoforge-1.21.11",
         "order": 0
@@ -18,7 +18,7 @@
         "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-1.21.11\\build\\moddev\\clientRunVmArgs.txt",
         "-Dfml.modFolders\u003dxaero_world_map_bridge%%D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-1.21.11\\bin\\main"
       ],
-      "cwd": "${workspaceFolder}\\run\\neoforge-1.21.11",
+      "cwd": "${workspaceFolder}\\run",
       "env": {},
       "console": "internalConsole",
       "shortenCommandLine": "none"
@@ -26,7 +26,7 @@
     {
       "type": "java",
       "request": "launch",
-      "name": "neoforge-26.1.2 - Client",
+      "name": "Minecraft Client NeoForge 26.1.2",
       "presentation": {
         "group": "Mod Development - neoforge-26.1.2",
         "order": 0
@@ -40,7 +40,7 @@
         "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.1.2\\build\\moddev\\clientRunVmArgs.txt",
         "-Dfml.modFolders\u003dxaero_world_map_bridge%%D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.1.2\\bin\\main"
       ],
-      "cwd": "${workspaceFolder}\\run\\neoforge-26.1.2",
+      "cwd": "${workspaceFolder}\\run",
       "env": {},
       "console": "internalConsole",
       "shortenCommandLine": "none"
@@ -48,7 +48,7 @@
     {
       "type": "java",
       "request": "launch",
-      "name": "neoforge-26.2 - Client",
+      "name": "Minecraft Client NeoForge 26.2",
       "presentation": {
         "group": "Mod Development - neoforge-26.2",
         "order": 0
@@ -62,7 +62,7 @@
         "@D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.2\\build\\moddev\\clientRunVmArgs.txt",
         "-Dfml.modFolders\u003dxaero_world_map_bridge%%D:\\Programs\\xaero-world-map-bridge\\versions\\neoforge-26.2\\bin\\main"
       ],
-      "cwd": "${workspaceFolder}\\run\\neoforge-26.2",
+      "cwd": "${workspaceFolder}\\run",
       "env": {},
       "console": "internalConsole",
       "shortenCommandLine": "none"

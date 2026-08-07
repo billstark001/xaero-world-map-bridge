@@ -49,17 +49,32 @@ ext.targets = [
     ]
 ]
 
+def fabricProjectPaths = targets.keySet().collect { ":versions:fabric-${it}" }
+def neoForgeProjectPaths = targets.keySet().collect { ":versions:neoforge-${it}" }
+def fabricGameTestTasks = fabricProjectPaths.collect { "${it}:runClientGameTest" }
+
+tasks.register("cleanIdeaRunConfigurations", Delete) {
+    group = "ide"
+    description = "Deletes generated Fabric run configurations before IDEA recreates them."
+    delete fileTree(rootProject.file(".idea/runConfigurations")) {
+        include "Minecraft_Client.xml"
+        include "Minecraft_Server.xml"
+        include "Minecraft_Client_Fabric_*fabric-*.xml"
+        include "Gametest_Minecraft_Client_Game_Test_*fabric-*.xml"
+    }
+}
+
+tasks.register("syncIdeaRunConfigurations") {
+    group = "ide"
+    description = "Recreates IDEA run configurations for every configured Fabric target."
+    dependsOn(fabricProjectPaths.collect { "${it}:ideaSyncTask" })
+}
+
 tasks.register("buildAll") {
     group = "build"
     description = "Builds every Fabric and NeoForge target."
-    dependsOn(
-        ":versions:fabric-1.21.11:build",
-        ":versions:fabric-26.1.2:build",
-        ":versions:fabric-26.2:build",
-        ":versions:neoforge-1.21.11:build",
-        ":versions:neoforge-26.1.2:build",
-        ":versions:neoforge-26.2:build"
-    )
+    dependsOn(fabricProjectPaths.collect { "${it}:build" })
+    dependsOn(neoForgeProjectPaths.collect { "${it}:build" })
 }
 
 tasks.register("testAll") {
@@ -71,23 +86,18 @@ tasks.register("testAll") {
 tasks.register("localIntegration") {
     group = "verification"
     description = "Runs graphical Fabric integration tests and NeoForge startup smoke tests locally."
-    dependsOn(
-        ":versions:fabric-1.21.11:runClientGameTest",
-        ":versions:fabric-26.1.2:runClientGameTest",
-        ":versions:fabric-26.2:runClientGameTest",
-        "localNeoForgeSmoke"
-    )
+    dependsOn(fabricGameTestTasks)
+    dependsOn("localNeoForgeSmoke")
 }
 
 gradle.projectsEvaluated {
-    project(":versions:fabric-26.1.2").tasks.named("runClientGameTest") {
-        mustRunAfter(":versions:fabric-1.21.11:runClientGameTest")
-    }
-    project(":versions:fabric-26.2").tasks.named("runClientGameTest") {
-        mustRunAfter(":versions:fabric-26.1.2:runClientGameTest")
+    fabricGameTestTasks.eachWithIndex { taskPath, index ->
+        if (index > 0) {
+            tasks.getByPath(taskPath).mustRunAfter(fabricGameTestTasks[index - 1])
+        }
     }
     tasks.named("localNeoForgeSmoke") {
-        mustRunAfter(":versions:fabric-26.2:runClientGameTest")
+        mustRunAfter(fabricGameTestTasks.last())
     }
 }
 

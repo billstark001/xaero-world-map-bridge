@@ -46,7 +46,44 @@ loom {
     runs {
         client {
             client()
-            runDir = rootProject.file("run/fabric-${target.minecraft}").absolutePath
+            configName = "Minecraft Client Fabric ${target.minecraft}"
+            getGenerateRunConfig().set(true)
+            runDir = rootProject.file("run").absolutePath
+        }
+    }
+}
+
+// Loom's IDEA application template does not select a JRE. Bind each generated
+// configuration to the Java version required by its Minecraft target.
+tasks.named("ideaSyncTask").configure {
+    dependsOn(rootProject.tasks.named("cleanIdeaRunConfigurations"))
+    doLast {
+        def moduleMarkers = [
+            "<module name=\"${rootProject.name}.versions.fabric-${target.minecraft}.main\"",
+            "<module name=\"${rootProject.name}.versions.fabric-${target.minecraft}.gametest\""
+        ]
+        def runConfigurationsDirectory = rootProject.file(".idea/runConfigurations")
+        if (!runConfigurationsDirectory.isDirectory()) return
+
+        fileTree(runConfigurationsDirectory) {
+            include "Minecraft_Client_Fabric_*fabric-${target.minecraft}.xml"
+            include "Gametest_Minecraft_Client_Game_Test_*fabric-${target.minecraft}.xml"
+        }.files.each { runConfigurationFile ->
+            def lines = runConfigurationFile.readLines("UTF-8").findAll {
+                !it.contains('name="ALTERNATIVE_JRE_PATH"') &&
+                    !it.contains('name="ALTERNATIVE_JRE_PATH_ENABLED"')
+            }
+            if (!lines.any { line -> moduleMarkers.any { line.contains(it) } }) return
+
+            def configurationLine = lines.findIndexOf { it.contains("<configuration ") }
+            if (configurationLine < 0) {
+                throw new GradleException("Invalid IDEA run configuration: ${runConfigurationFile}")
+            }
+            lines.add(configurationLine + 1,
+                "    <option name=\"ALTERNATIVE_JRE_PATH_ENABLED\" value=\"true\" />")
+            lines.add(configurationLine + 1,
+                "    <option name=\"ALTERNATIVE_JRE_PATH\" value=\"${target.javaVersion}\" />")
+            runConfigurationFile.setText(lines.join(System.lineSeparator()) + System.lineSeparator(), "UTF-8")
         }
     }
 }
