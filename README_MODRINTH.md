@@ -23,13 +23,18 @@ It is a client-only dependency. It does not need to be installed on a dedicated 
 
 ## Compatibility
 
-| Minecraft | Fabric | NeoForge | Xaero's World Map |
+| Minecraft release line | Fabric | NeoForge | Guaranteed Xaero's World Map releases |
 | --- | --- | --- | --- |
-| 1.21.11 | Yes | Experimental | 1.40--1.44 |
-| 26.1.2 | Yes | Experimental | 1.40--1.44 |
-| 26.2 | Yes | Experimental | 1.41--1.44 |
+| 1.21.11 | Yes | Experimental | 1.40--1.45 |
+| 26.1.2 | Yes | Experimental | 1.40--1.45 |
+| 26.2 | Yes | Experimental | 1.41--1.45 |
 
 Xaero's World Map 1.40 was not released for Minecraft 26.2. Minecraft 26.3 is not supported because a compatible Xaero Fabric artifact is unavailable.
+
+These ranges describe versions that are actively verified, not hard upper limits. Later Xaero releases are allowed to
+load on a best-effort basis. If a later release changes the verified map-layer hook, the bridge stays loadable and can
+use its optional tail fallback. Loader upgrades and later patches within the matching Minecraft release line are also
+accepted; use the bridge file for that Minecraft release line and loader.
 
 ## For mod developers
 

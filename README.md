@@ -33,17 +33,27 @@ The bridge has two map-layer paths:
 
 Fabric exposes `Map overlay`, `UI overlay`, and `Map injection` settings through Mod Menu when it is installed. Mod Menu is an optional Fabric integration. NeoForge artifacts use the same persisted properties file and do not provide Mod Menu integration.
 
-The pass-start and pass-tail hooks are required on every supported target. The exact map-layer hook may be absent so the tail fallback remains available. In exact-only mode, the bridge reports the first missing exact hook when map overlays are registered.
+The pass-start and pass-tail hooks are bytecode-verified on every guaranteed target. All injections remain optional at
+load time so an unverified future Xaero release cannot abort startup solely because an internal method changed. The
+exact map-layer hook may be absent so the tail fallback remains available. In exact-only mode, the bridge reports the
+first missing exact hook when map overlays are registered.
 
 ## Supported targets
 
-| Minecraft | Fabric | NeoForge | Xaero World Map releases |
+| Minecraft release line | Fabric | NeoForge | Guaranteed Xaero World Map releases |
 | --- | --- | --- | --- |
-| 1.21.11 | Yes | Experimental | 1.40--1.44 |
-| 26.1.2 | Yes | Experimental | 1.40--1.44 |
-| 26.2 | Yes | Experimental | 1.41--1.44 |
+| 1.21.11 | Yes | Experimental | 1.40--1.45 |
+| 26.1.2 | Yes | Experimental | 1.40--1.45 |
+| 26.2 | Yes | Experimental | 1.41--1.45 |
 
 Xaero World Map 1.40 was not published for Minecraft 26.2. Minecraft 26.3 is excluded because no compatible Xaero Fabric artifact is available.
+
+The table is the bytecode-verified guarantee, not a hard maximum. Newer Xaero releases are allowed to load on the
+matching Minecraft artifact and are handled on a best-effort basis. If an unverified Xaero release changes the exact
+map-layer anchor, the bridge leaves that hook inactive instead of failing startup; users can opt into the tail fallback.
+Fabric Loader and Java likewise have minimum-only requirements. Minecraft and NeoForge predicates accept later patch
+versions within the same Minecraft release line, while keeping separate binary-incompatible release lines in separate
+JARs.
 
 ## Build
 
@@ -59,7 +69,8 @@ Xaero World Map 1.40 was not published for Minecraft 26.2. Minecraft 26.3 is exc
 
 `buildAll` builds the complete six-target matrix. Each output is stored in its target module's `build/libs` directory.
 
-For a Modrinth release, the following command builds every target and collects the six distributable JARs in the root [`build/modrinth`](build/modrinth) directory. Source, development, and Javadoc JARs are excluded.
+For a Modrinth release, the following command builds every target and collects the six distributable JARs in the root
+`build/modrinth` directory. Source, development, and Javadoc JARs are excluded.
 
 ```powershell
 .\scripts\build-modrinth.ps1
@@ -124,7 +135,7 @@ Use this script to disassemble a supplied Xaero JAR:
 .\scripts\disassemble-xaero.ps1 -Jar path\to\xaeroworldmap.jar
 ```
 
-It stores `GuiMap.javap.txt` under `build/xaero-inspection`. To verify every published artifact in the supported 1.40--1.44 matrix, run:
+It stores `GuiMap.javap.txt` under `build/xaero-inspection`. To verify every published artifact in the guaranteed 1.40--1.45 matrix, run:
 
 ```powershell
 .\scripts\verify-xaero-artifacts.ps1
@@ -134,6 +145,11 @@ The verification script downloads artifacts from Modrinth, disassembles `xaero.m
 
 ## CI/CD
 
-GitHub Actions builds each Fabric and NeoForge target independently. A separate workflow validates every published Xaero artifact. Tags in the form `v0.1.0` build the complete matrix and publish all JARs to a GitHub Release.
+GitHub Actions builds each Fabric and NeoForge target independently. A separate workflow validates every published
+Xaero artifact in the guaranteed range. Tags such as `v0.1.1` validate the version and changelog, build the complete
+matrix once, and publish all six JARs to a GitHub Release. When the `MODRINTH_PROJECT_ID` repository variable and
+`MODRINTH_TOKEN` secret are configured, the same workflow also publishes a separate Fabric or NeoForge Modrinth
+version for every Minecraft target. The workflow can be dispatched manually against an existing tag to retry a
+release; Modrinth retrying is opt-in for manual runs.
 
 Contribution, changelog, and commit-message conventions are documented in [`CONTRIBUTING.md`](CONTRIBUTING.md). User-visible changes are recorded in [`CHANGELOG.md`](CHANGELOG.md).

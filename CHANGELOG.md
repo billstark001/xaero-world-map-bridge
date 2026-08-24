@@ -6,9 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-25
+
 ### Added
 
 - MIT license, a Modrinth-ready project description, and a one-command script that builds every target and collects the six distributable JARs in `build/modrinth`.
+- A validated, retryable release workflow that publishes the six loader-specific artifacts to GitHub Releases and, when configured, Modrinth.
+
+### Changed
+
+- Updated the build and bytecode-verification baseline to Xaero's World Map 1.45.0.
+- Allowed later Minecraft patch releases within each artifact's tested release line while keeping earlier, untested versions and binary-incompatible lines excluded.
+- Changed Xaero, NeoForge, and Fabric Loader metadata to minimum-only requirements, consistent with the existing Java predicate, so later dependency releases can load on a best-effort basis.
+- Made all Xaero Mixin entry points fail soft outside the verified range instead of aborting startup when an upstream method or anchor changes.
+- Removed the redundant direct Fabric API requirement from bridge metadata; Xaero's Fabric artifact continues to declare Fabric API itself.
+
+### Fixed
+
+- Corrected the documented Minecraft, loader, and Xaero compatibility guarantees and release instructions.
+- Updated the NeoForge smoke test to read the shared development run directory used by every target.
 
 ## [0.1.0] - 2026-07-29
 
@@ -30,5 +46,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Automated bytecode verification of the exact injection anchor across every published Xaero artifact in the supported release matrix.
 - Contributor documentation for testing, Conventional Commits, and Keep a Changelog.
 
-[Unreleased]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/billstark001/xaero-world-map-bridge/releases/tag/v0.1.0

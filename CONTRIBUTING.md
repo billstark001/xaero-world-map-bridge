@@ -39,7 +39,7 @@ Breaking changes append `!`, for example `feat!: replace the overlay canvas cont
 Examples:
 
 ```text
-fix: require the stable Xaero render hooks
+fix: tolerate unverified Xaero render hooks
 add: cover overlay rendering with client game tests
 docs: document canonical dimension keys
 ```
