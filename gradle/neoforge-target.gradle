@@ -58,11 +58,11 @@ dependencies {
 }
 
 def resourceProperties = [
-    version        : project.version,
-    minecraftRange : target.minecraftRange,
+    version          : project.version,
     minecraftNeoRange: target.minecraftNeoRange,
-    mixinJava      : target.mixinJava,
-    neoForgeVersion: target.neoForge
+    xaeroVersionRange: target.xaeroNeoRange,
+    mixinJava        : target.mixinJava,
+    neoForgeRange    : target.neoForgeRange
 ]
 
 processResources {

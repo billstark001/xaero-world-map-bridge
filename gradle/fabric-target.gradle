@@ -168,6 +168,8 @@ if (target.remappedFabric) {
 def resourceProperties = [
     version            : project.version,
     minecraftRange     : target.minecraftRange,
+    xaeroVersionRange  : target.xaeroFabricRange,
+    fabricLoaderRange  : ">=${rootProject.fabric_loader_min_version}",
     javaVersion        : target.javaVersion,
     mixinJava          : target.mixinJava
 ]
@@ -176,6 +178,11 @@ processResources {
     inputs.properties(resourceProperties)
     filesMatching("fabric.mod.json") { expand(resourceProperties) }
     filesMatching("xaero-world-map-bridge.mixins.json") { expand(resourceProperties) }
+}
+
+tasks.named("processGametestResources").configure {
+    inputs.properties(resourceProperties)
+    filesMatching("fabric.mod.json") { expand(resourceProperties) }
 }
 
 tasks.withType(JavaCompile).configureEach {

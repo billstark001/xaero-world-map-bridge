@@ -13,11 +13,10 @@
   },
   "mixins": ["xaero-world-map-bridge.mixins.json"],
   "depends": {
-    "fabricloader": ">=0.19.3",
+    "fabricloader": "${fabricLoaderRange}",
     "minecraft": "${minecraftRange}",
     "java": ">=${javaVersion}",
-    "fabric-api": "*",
-    "xaeroworldmap": ">=1.40.0 <1.45.0"
+    "xaeroworldmap": "${xaeroVersionRange}"
   },
   "suggests": {
     "modmenu": "*"

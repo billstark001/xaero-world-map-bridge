@@ -10,9 +10,9 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.19.3",
+    "fabricloader": "${fabricLoaderRange}",
     "fabric-client-gametest-api-v1": "*",
     "xaero_world_map_bridge": "*",
-    "xaeroworldmap": ">=1.40.0 <1.45.0"
+    "xaeroworldmap": "${xaeroVersionRange}"
   }
 }

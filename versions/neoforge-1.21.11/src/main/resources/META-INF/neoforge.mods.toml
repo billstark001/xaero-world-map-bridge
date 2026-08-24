@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[2,)"
+loaderVersion="[4,)"
 license="MIT"
 
 [[mixins]]
@@ -14,7 +14,7 @@ description='''A small overlay API bridge for Xaero's World Map.'''
 [[dependencies.xaero_world_map_bridge]]
 modId="neoforge"
 type="required"
-versionRange="[${neoForgeVersion},)"
+versionRange="${neoForgeRange}"
 ordering="NONE"
 side="CLIENT"
 
@@ -28,6 +28,6 @@ side="CLIENT"
 [[dependencies.xaero_world_map_bridge]]
 modId="xaeroworldmap"
 type="required"
-versionRange="[1.40.0,1.45.0)"
+versionRange="${xaeroVersionRange}"
 ordering="AFTER"
 side="CLIENT"

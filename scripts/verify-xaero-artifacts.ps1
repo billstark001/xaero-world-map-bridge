@@ -5,7 +5,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$headers = @{ "User-Agent" = "xaero-world-map-bridge-ci/0.1.0" }
+$headers = @{ "User-Agent" = "xaero-world-map-bridge-ci/0.1.1" }
 $outputRoot = [System.IO.Path]::GetFullPath($OutputDirectory)
 $downloadRoot = Join-Path $outputRoot "artifacts"
 New-Item -ItemType Directory -Force -Path $downloadRoot | Out-Null
@@ -13,7 +13,7 @@ New-Item -ItemType Directory -Force -Path $downloadRoot | Out-Null
 $targets = @(
     @{
         Minecraft = "1.21.11"
-        Minors = @(40, 41, 42, 43, 44)
+        Minors = @(40, 41, 42, 43, 44, 45)
         FabricRenderMethod = "method_25394"
         NeoForgeRenderMethod = "render"
         FabricDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lnet/minecraft/class_4597$class_4598;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/class_310;F)Lxaero/map/element/HoveredMapElementHolder;'
@@ -21,7 +21,7 @@ $targets = @(
     },
     @{
         Minecraft = "26.1.2"
-        Minors = @(40, 41, 42, 43, 44)
+        Minors = @(40, 41, 42, 43, 44, 45)
         FabricRenderMethod = "extractRenderState"
         NeoForgeRenderMethod = "extractRenderState"
         FabricDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
@@ -29,7 +29,7 @@ $targets = @(
     },
     @{
         Minecraft = "26.2"
-        Minors = @(41, 42, 43, 44)
+        Minors = @(41, 42, 43, 44, 45)
         FabricRenderMethod = "extractRenderState"
         NeoForgeRenderMethod = "extractRenderState"
         FabricDescriptor = 'xaero/map/element/MapElementRenderHandler.render:(Lxaero/map/gui/GuiMap;Lxaero/lib/client/graphics/XaeroBufferProvider;Lxaero/map/graphics/renderer/multitexture/MultiTextureRenderTypeRendererProvider;DDIIDDDDDFZLxaero/map/element/HoveredMapElementHolder;Lnet/minecraft/client/Minecraft;F)Lxaero/map/element/HoveredMapElementHolder;'
@@ -116,4 +116,4 @@ if ($failures.Count -gt 0) {
     exit 1
 }
 
-Write-Host "All published Xaero 1.40--1.44 targets match the recorded exact anchors."
+Write-Host "All published Xaero 1.40--1.45 targets match the recorded exact anchors."

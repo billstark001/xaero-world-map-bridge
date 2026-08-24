@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Exact-before-elements and tail-fallback hooks for every published Xaero 1.41--1.44 release on Minecraft 26.2. */
+/** Exact-before-elements and tail-fallback hooks for every published Xaero 1.41--1.45 release on Minecraft 26.2. */
 @Mixin(targets = "xaero.map.gui.GuiMap", remap = false)
 public abstract class XaeroGuiMapMixin {
     @Unique
@@ -24,7 +24,7 @@ public abstract class XaeroGuiMapMixin {
         BridgeRenderer.renderTail(screen, graphics, screen.width, screen.height);
     }
 
-    @Inject(method = "extractRenderState", at = @At("HEAD"), remap = false, require = 1)
+    @Inject(method = "extractRenderState", at = @At("HEAD"), remap = false, require = 0, expect = 1)
     private void xaeroBridge$begin(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
                                    float delta, CallbackInfo callback) { BridgeRenderer.beginPass(); }
 
@@ -36,7 +36,7 @@ public abstract class XaeroGuiMapMixin {
     private void xaeroBridge$mapLayer(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
                                       float delta, CallbackInfo callback) { xaeroBridge$exact(graphics); }
 
-    @Inject(method = "extractRenderState", at = @At("TAIL"), remap = false, require = 1)
+    @Inject(method = "extractRenderState", at = @At("TAIL"), remap = false, require = 0, expect = 1)
     private void xaeroBridge$tailLayer(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
                                        float delta, CallbackInfo callback) { xaeroBridge$tail(graphics); }
 }
