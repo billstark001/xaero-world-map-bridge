@@ -21,7 +21,7 @@ function Stop-ProcessTree {
 
 foreach ($target in $targets) {
     $startedAt = Get-Date
-    $log = Join-Path $projectRoot "run/neoforge-$target/logs/latest.log"
+    $log = Join-Path $projectRoot "run/logs/latest.log"
     $arguments = @(
         ":versions:neoforge-${target}:runClient",
         "--console=plain",
