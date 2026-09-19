@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = "Stop"
 $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 $gradleWrapper = Join-Path $projectRoot "gradlew.bat"
-$targets = @("1.21.11", "26.1.2", "26.2")
+$targets = @("1.21.11", "26.1.2", "26.2", "26.3")
 $smokeLogDirectory = Join-Path $projectRoot "build/neoforge-smoke-logs"
 New-Item -ItemType Directory -Path $smokeLogDirectory -Force | Out-Null
 

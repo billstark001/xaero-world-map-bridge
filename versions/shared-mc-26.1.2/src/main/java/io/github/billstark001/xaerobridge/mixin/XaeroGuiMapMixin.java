@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Exact-before-elements and tail-fallback hooks for every Xaero 1.40--1.45 release on Minecraft 26.1.2. */
+/** Exact-before-elements and tail-fallback hooks for every Xaero 1.40--1.46 release on Minecraft 26.1.2. */
 @Mixin(targets = "xaero.map.gui.GuiMap", remap = false)
 public abstract class XaeroGuiMapMixin {
     @Unique

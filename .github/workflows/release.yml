@@ -11,7 +11,7 @@ on:
         required: true
         type: string
       publish_modrinth:
-        description: "Publish all six Modrinth versions when credentials are configured"
+        description: "Publish all eight Modrinth versions when credentials are configured"
         required: true
         default: false
         type: boolean
@@ -118,16 +118,16 @@ jobs:
           set -euo pipefail
           mkdir -p build/release
           mv release-notes.md build/release/
-          for minecraft in 1.21.11 26.1.2 26.2; do
+          for minecraft in 1.21.11 26.1.2 26.2 26.3; do
             for loader in fabric neoforge; do
               jar="versions/$loader-$minecraft/build/libs/xaero-world-map-bridge-$VERSION+$minecraft-$loader.jar"
               test -f "$jar"
               cp "$jar" build/release/
             done
           done
-          test "$(find build/release -maxdepth 1 -name '*.jar' -type f | wc -l)" -eq 6
+          test "$(find build/release -maxdepth 1 -name '*.jar' -type f | wc -l)" -eq 8
           test "$(find versions -path '*/build/libs/xaero-world-map-bridge-*.jar' \
-            -type f ! -name '*-sources.jar' | wc -l)" -eq 6
+            -type f ! -name '*-sources.jar' | wc -l)" -eq 8
 
       - name: Upload release bundle
         uses: actions/upload-artifact@v7
@@ -194,6 +194,16 @@ jobs:
               xaeros-world-map(required)
           - minecraft: "26.2"
             game_versions: "26.2"
+            loader: neoforge
+            dependencies: "xaeros-world-map(required)"
+          - minecraft: "26.3"
+            game_versions: "26.3"
+            loader: fabric
+            dependencies: |-
+              fabric-api(required)
+              xaeros-world-map(required)
+          - minecraft: "26.3"
+            game_versions: "26.3"
             loader: neoforge
             dependencies: "xaeros-world-map(required)"
     runs-on: ubuntu-24.04

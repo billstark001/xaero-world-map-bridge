@@ -25,8 +25,8 @@ $artifacts = Get-ChildItem -Path $versionsDirectory -Recurse -File -Filter "xaer
     Where-Object { $_.Name -notmatch "-(sources|dev|javadoc)\.jar$" } |
     Sort-Object Name
 
-if ($artifacts.Count -ne 6) {
-    throw "Expected six distributable JARs after building, but found $($artifacts.Count)."
+if ($artifacts.Count -ne 8) {
+    throw "Expected eight distributable JARs after building, but found $($artifacts.Count)."
 }
 
 foreach ($artifact in $artifacts) {

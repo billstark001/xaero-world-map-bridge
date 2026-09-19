@@ -20,8 +20,10 @@ class DistributionMetadataTest {
         assertTrue(build.contains("minecraftRange        : \"1.21.11\""));
         assertTrue(build.contains("minecraftRange        : \">=26.1.2 <26.2.0\""));
         assertTrue(build.contains("minecraftRange        : \">=26.2 <26.3.0\""));
+        assertTrue(build.contains("minecraftRange        : \">=26.3 <26.4\""));
         assertTrue(build.contains("minecraftNeoRange     : \"[26.1.2,26.2.0)\""));
         assertTrue(build.contains("minecraftNeoRange     : \"[26.2,26.3.0)\""));
+        assertTrue(build.contains("minecraftNeoRange     : \"[26.3,26.4)\""));
     }
 
     @Test
@@ -33,9 +35,12 @@ class DistributionMetadataTest {
 
         assertTrue(build.contains("xaeroFabricRange      : \">=1.40.0\""));
         assertTrue(build.contains("xaeroFabricRange      : \">=1.41.0\""));
+        assertTrue(build.contains("xaeroFabricRange      : \">=1.46.2\""));
         assertTrue(build.contains("xaeroNeoRange         : \"[1.40.0,)\""));
         assertTrue(build.contains("xaeroNeoRange         : \"[1.41.0,)\""));
+        assertTrue(build.contains("xaeroNeoRange         : \"[1.46.3,)\""));
         assertTrue(build.contains("neoForgeRange         : \"[26.2.0.1-beta,)\""));
+        assertTrue(build.contains("neoForgeRange         : \"[26.3.0.0-beta,)\""));
         assertTrue(fabricMetadata.contains("\"xaeroworldmap\": \"${xaeroVersionRange}\""));
         assertFalse(fabricMetadata.contains("\"fabric-api\""));
         assertTrue(neoForgeMetadata.contains("loaderVersion=\"[4,)\""));

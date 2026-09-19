@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceKey;
 
 import java.lang.reflect.Field;
 
-/** Shared renderer for Minecraft 26.1.2 and 26.2. */
+/** Shared renderer for Minecraft 26.1.2 through 26.3. */
 public final class BridgeRenderer {
     private static boolean exactRendered;
     private static boolean missingExactReported;
@@ -37,7 +37,9 @@ public final class BridgeRenderer {
                         + "screen; enable tail fallback or install a supported Xaero version.");
             }
         }
-        if (BridgeSettings.isUiOverlayEnabled()) OverlayRegistry.renderUi(new UiOverlayContext(graphics::fill, width, height));
+        if (BridgeSettings.isUiOverlayEnabled()) {
+            OverlayRegistry.renderUi(new UiOverlayContext(graphics::fill, width, height));
+        }
     }
 
     private static void renderMap(Screen screen, GuiGraphicsExtractor graphics, int width, int height) {

@@ -35,6 +35,10 @@ jobs:
             java: "25"
             artifact: versions-fabric-26.2
             artifactPath: versions/fabric-26.2
+          - module: versions:fabric-26.3
+            java: "25"
+            artifact: versions-fabric-26.3
+            artifactPath: versions/fabric-26.3
           - module: versions:neoforge-1.21.11
             java: "21"
             artifact: versions-neoforge-1.21.11
@@ -47,6 +51,10 @@ jobs:
             java: "25"
             artifact: versions-neoforge-26.2
             artifactPath: versions/neoforge-26.2
+          - module: versions:neoforge-26.3
+            java: "25"
+            artifact: versions-neoforge-26.3
+            artifactPath: versions/neoforge-26.3
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

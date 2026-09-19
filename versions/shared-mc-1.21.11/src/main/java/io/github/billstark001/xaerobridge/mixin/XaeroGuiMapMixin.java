@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * intentionally only a fallback because it draws above Xaero's UI.
  *
  * <p>The anchor descriptor was verified against every published Fabric and
- * NeoForge Xaero World Map 1.40--1.45 artifact for Minecraft 1.21.11.</p>
+ * NeoForge Xaero World Map 1.40--1.46 artifact for Minecraft 1.21.11.</p>
  */
 @Mixin(targets = "xaero.map.gui.GuiMap", remap = false)
 public abstract class XaeroGuiMapMixin {
