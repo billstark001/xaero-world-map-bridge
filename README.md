@@ -8,7 +8,12 @@ Xaero World Map Bridge is a client-side compatibility library that provides load
 
 `XaeroWorldMapBridge.registerUiOverlay(id, order, renderer)` renders at the end of Xaero's screen rendering and above Xaero's UI.
 
-Both callbacks receive a loader-neutral `OverlayCanvas`. Map callbacks also receive the current camera, scale, dimension string, and world-to-screen helper methods. A registration is an `AutoCloseable`; close it to unregister.
+Both callbacks receive a loader-neutral `OverlayCanvas` for filled rectangles. Map callbacks also receive the current
+camera, scale, dimension string, and world-to-screen helper methods. A registration is an `AutoCloseable`; close it to
+unregister.
+
+Canvas coordinates follow Xaero's own screen convention: GUI-scaled pixels, `(0, 0)` at the top-left, positive X to
+the right, and positive Y down. Rectangle right/bottom bounds are exclusive, as with Minecraft's GUI drawing API.
 
 `MapOverlayContext.dimension()` is a canonical Minecraft dimension key in `namespace:path` form, for example `minecraft:overworld` or `minecraft:the_nether`. It returns `unknown` only when Xaero has not exposed a viewed dimension.
 
@@ -23,6 +28,45 @@ XaeroWorldMapBridge.registerUiOverlay("example:badge", 0, context -> {
     context.canvas().fill(4, 4, 84, 18, 0xCC202020);
 });
 ```
+
+### Native Xaero elements and widgets
+
+Xaero 1.46 already exposes its map-element pipeline, so the bridge does not wrap it with a second, competing API.
+Mods that need text, textures, hover handling, right-click actions, tooltips, or Xaero-managed labels should compile
+directly against Xaero's published development artifact and register their `ElementRenderer` with:
+
+```groovy
+repositories {
+    maven {
+        name = "Xaero's Maven"
+        url = "https://chocolateminecraft.com/maven"
+    }
+}
+
+dependencies {
+    // Recommended for code shared by Fabric and NeoForge targets.
+    compileOnly "xaero.map:xaeroworldmap-common-${minecraft_version}:${xaero_world_map_version}"
+    // A loader-specific source set can instead use xaeroworldmap-fabric-* or xaeroworldmap-neoforge-*.
+}
+```
+
+The coordinates above follow Xaero's [official developer setup](https://www.curseforge.com/minecraft/mc-mods/xaeros-world-map#for-developers).
+At runtime, register the renderer after Xaero's client setup:
+
+```java
+WorldMap.mapElementRenderHandler.add(renderer);
+```
+
+Register after Xaero's client initialization. Supply world positions from `ElementReader.getRenderX` and
+`getRenderZ`, handle `ElementRenderLocation.WORLD_MAP`, and use `ElementRenderer.getOrder()` for Xaero's native
+ordering. The `MapElementGraphics` passed to the renderer provides `drawString`, `drawCenteredString`, `blit`,
+`fill`, and `fillGradient`; its transformed origin and scale follow Xaero's own element positioning. These are Xaero
+APIs, so consumers should pin and test the Xaero version they compile against.
+
+For ordinary interactive controls, use the loader's screen-initialization event, check for `GuiMap`, and call its
+public `addRenderableWidget(...)` method with a vanilla widget such as `Button`. Position these in the same top-left
+GUI coordinate space described above. The bridge's render callback is intended for drawing only; it deliberately does
+not duplicate Minecraft's focus, input, narration, and widget lifecycle.
 
 ## Injection policy
 
@@ -42,11 +86,13 @@ first missing exact hook when map overlays are registered.
 
 | Minecraft release line | Fabric | NeoForge | Guaranteed Xaero World Map releases |
 | --- | --- | --- | --- |
-| 1.21.11 | Yes | Experimental | 1.40--1.45 |
-| 26.1.2 | Yes | Experimental | 1.40--1.45 |
-| 26.2 | Yes | Experimental | 1.41--1.45 |
+| 1.21.11 | Yes | Experimental | 1.40--1.46 |
+| 26.1.2 | Yes | Experimental | 1.40--1.46 |
+| 26.2 | Yes | Experimental | 1.41--1.46 |
+| 26.3 | Yes | Experimental | 1.46 |
 
-Xaero World Map 1.40 was not published for Minecraft 26.2. Minecraft 26.3 is excluded because no compatible Xaero Fabric artifact is available.
+Xaero World Map 1.40 was not published for Minecraft 26.2. Xaero 1.46 is the first release line published for
+Minecraft 26.3.
 
 The table is the bytecode-verified guarantee, not a hard maximum. Newer Xaero releases are allowed to load on the
 matching Minecraft artifact and are handled on a best-effort basis. If an unverified Xaero release changes the exact
@@ -61,15 +107,17 @@ JARs.
 .\gradlew.bat :versions:fabric-1.21.11:build
 .\gradlew.bat :versions:fabric-26.1.2:build
 .\gradlew.bat :versions:fabric-26.2:build
+.\gradlew.bat :versions:fabric-26.3:build
 
 .\gradlew.bat :versions:neoforge-1.21.11:build
 .\gradlew.bat :versions:neoforge-26.1.2:build
 .\gradlew.bat :versions:neoforge-26.2:build
+.\gradlew.bat :versions:neoforge-26.3:build
 ```
 
-`buildAll` builds the complete six-target matrix. Each output is stored in its target module's `build/libs` directory.
+`buildAll` builds the complete eight-target matrix. Each output is stored in its target module's `build/libs` directory.
 
-For a Modrinth release, the following command builds every target and collects the six distributable JARs in the root
+For a Modrinth release, the following command builds every target and collects the eight distributable JARs in the root
 `build/modrinth` directory. Source, development, and Javadoc JARs are excluded.
 
 ```powershell
@@ -105,7 +153,8 @@ separate updates.
 
 ## Tests
 
-Loader-neutral unit tests cover coordinate conversion, registry ordering and isolation, registration lifecycle, settings persistence, and distribution metadata:
+Loader-neutral unit tests cover coordinate conversion, registry ordering and isolation, registration lifecycle,
+settings persistence, and distribution metadata:
 
 ```powershell
 .\gradlew.bat testAll
@@ -123,7 +172,7 @@ Fabric screenshots are stored under each target's `build/run/clientGameTest/scre
 .\gradlew.bat localNeoForgeSmoke
 ```
 
-Client integration tests are not part of GitHub Actions because they require a graphical Minecraft client. Unit tests, all six builds, and published Xaero anchor verification are automated in CI.
+Client integration tests are not part of GitHub Actions because they require a graphical Minecraft client. Unit tests, all eight builds, and published Xaero anchor verification are automated in CI.
 
 ## Xaero compatibility verification
 
@@ -135,7 +184,7 @@ Use this script to disassemble a supplied Xaero JAR:
 .\scripts\disassemble-xaero.ps1 -Jar path\to\xaeroworldmap.jar
 ```
 
-It stores `GuiMap.javap.txt` under `build/xaero-inspection`. To verify every published artifact in the guaranteed 1.40--1.45 matrix, run:
+It stores `GuiMap.javap.txt` under `build/xaero-inspection`. To verify every published artifact in the guaranteed 1.40--1.46 matrix, run:
 
 ```powershell
 .\scripts\verify-xaero-artifacts.ps1
@@ -147,7 +196,7 @@ The verification script downloads artifacts from Modrinth, disassembles `xaero.m
 
 GitHub Actions builds each Fabric and NeoForge target independently. A separate workflow validates every published
 Xaero artifact in the guaranteed range. Tags such as `v0.1.1` validate the version and changelog, build the complete
-matrix once, and publish all six JARs to a GitHub Release. When the `MODRINTH_PROJECT_ID` repository variable and
+matrix once, and publish all eight JARs to a GitHub Release. When the `MODRINTH_PROJECT_ID` repository variable and
 `MODRINTH_TOKEN` secret are configured, the same workflow also publishes a separate Fabric or NeoForge Modrinth
 version for every Minecraft target. The workflow can be dispatched manually against an existing tag to retry a
 release; Modrinth retrying is opt-in for manual runs.

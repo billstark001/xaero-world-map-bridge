@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Fabric and NeoForge toolchain targets for Minecraft 26.3 with Xaero's World Map 1.46.
+- Guidance for using Xaero's public map-element graphics (including text and textures) and vanilla widgets directly, without introducing a competing bridge API.
+
+### Changed
+
+- Extended the bytecode-verified Xaero compatibility baseline through the 1.46 release line while retaining open upper-bound dependency predicates.
+
 ## [0.1.1] - 2026-08-25
 
 ### Added

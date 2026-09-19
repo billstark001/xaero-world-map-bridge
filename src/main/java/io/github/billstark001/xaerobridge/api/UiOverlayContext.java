@@ -4,6 +4,8 @@ import java.util.Objects;
 
 /**
  * Context for an overlay deliberately drawn above Xaero's complete UI.
+ * Width, height and canvas positions are GUI-scaled pixels using the same
+ * top-left origin as Xaero's own full-screen map controls.
  */
 public final class UiOverlayContext {
     private final OverlayCanvas canvas;

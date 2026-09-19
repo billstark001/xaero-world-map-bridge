@@ -5,7 +5,7 @@ import io.github.billstark001.xaerobridge.internal.OverlayRegistry;
 import java.util.Objects;
 
 /**
- * Public API of Xaero World Map Bridge 0.1.x.
+ * Public API of Xaero World Map Bridge.
  *
  * <p>This release intentionally exposes only two extension points: map layers
  * and UI layers. Both are client-side and must be registered after the client

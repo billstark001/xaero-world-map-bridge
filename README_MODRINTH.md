@@ -25,11 +25,12 @@ It is a client-only dependency. It does not need to be installed on a dedicated 
 
 | Minecraft release line | Fabric | NeoForge | Guaranteed Xaero's World Map releases |
 | --- | --- | --- | --- |
-| 1.21.11 | Yes | Experimental | 1.40--1.45 |
-| 26.1.2 | Yes | Experimental | 1.40--1.45 |
-| 26.2 | Yes | Experimental | 1.41--1.45 |
+| 1.21.11 | Yes | Experimental | 1.40--1.46 |
+| 26.1.2 | Yes | Experimental | 1.40--1.46 |
+| 26.2 | Yes | Experimental | 1.41--1.46 |
+| 26.3 | Yes | Experimental | 1.46 |
 
-Xaero's World Map 1.40 was not released for Minecraft 26.2. Minecraft 26.3 is not supported because a compatible Xaero Fabric artifact is unavailable.
+Xaero's World Map 1.40 was not released for Minecraft 26.2. Xaero 1.46 is the first release line published for Minecraft 26.3.
 
 These ranges describe versions that are actively verified, not hard upper limits. Later Xaero releases are allowed to
 load on a best-effort basis. If a later release changes the verified map-layer hook, the bridge stays loadable and can
@@ -47,6 +48,11 @@ XaeroWorldMapBridge.registerMapOverlay("example:claims", 100, context -> {
     context.canvas().fill(x, y, x + 16, y + 16, 0x80FFAA00);
 });
 ```
+
+`OverlayCanvas` uses Xaero's GUI-scaled, top-left-origin screen coordinates. For text, textures, interactive map
+elements and ordinary widgets, use Xaero 1.46's public `WorldMap.mapElementRenderHandler`, `MapElementGraphics`, and
+`GuiMap.addRenderableWidget(...)` APIs directly; the bridge does not duplicate their rendering, input, or lifecycle
+behavior.
 
 See the [project README](https://github.com/billstark001/xaero-world-map-bridge#api) for the complete API, build instructions, and compatibility details.
 
