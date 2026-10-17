@@ -29,9 +29,9 @@ class DistributionMetadataTest {
     @Test
     void xaeroRangesPermitBestEffortFutureVersions() throws IOException {
         String build = Files.readString(projectRoot.resolve("build.gradle"));
-        String fabricMetadata = Files.readString(projectRoot.resolve("src/main/resources/fabric.mod.json"));
+        String fabricMetadata = Files.readString(projectRoot.resolve("src/fabric/resources/fabric.mod.json"));
         String neoForgeMetadata = Files.readString(projectRoot.resolve(
-                "versions/neoforge-26.2/src/main/resources/META-INF/neoforge.mods.toml"));
+                "src/neoforge/resources/META-INF/neoforge.mods.toml"));
 
         assertTrue(build.contains("xaeroFabricRange      : \">=1.40.0\""));
         assertTrue(build.contains("xaeroFabricRange      : \">=1.41.0\""));
@@ -50,7 +50,7 @@ class DistributionMetadataTest {
 
     @Test
     void modMenuIsOptional() throws IOException {
-        String metadata = Files.readString(projectRoot.resolve("src/main/resources/fabric.mod.json"));
+        String metadata = Files.readString(projectRoot.resolve("src/fabric/resources/fabric.mod.json"));
         int depends = metadata.indexOf("\"depends\"");
         int suggests = metadata.indexOf("\"suggests\"");
 
@@ -62,7 +62,7 @@ class DistributionMetadataTest {
     @Test
     void mixinHooksFailSoftForUnverifiedXaeroVersions() throws IOException {
         String mixin = Files.readString(projectRoot.resolve(
-                "versions/shared-mc-1.21.11/src/main/java/io/github/billstark001/xaerobridge/mixin/XaeroGuiMapMixin.java"));
+                "src/client/java/io/github/billstark001/xaerobridge/mixin/XaeroGuiMapMixin.java"));
         String normalizedMixin = mixin.replaceAll("\\s+", " ");
 
         assertTrue(normalizedMixin.contains(

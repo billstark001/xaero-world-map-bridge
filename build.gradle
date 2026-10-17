@@ -20,7 +20,7 @@ ext.targets = [
         xaeroNeoRange         : "[1.40.0,)",
         mixinJava             : "JAVA_21",
         remappedFabric        : true,
-        modernRenderer        : false
+        preprocessorVersion   : 12111
     ],
     "26.1.2": [
         minecraft             : "26.1.2",
@@ -37,7 +37,7 @@ ext.targets = [
         xaeroNeoRange         : "[1.40.0,)",
         mixinJava             : "JAVA_25",
         remappedFabric        : false,
-        modernRenderer        : true
+        preprocessorVersion   : 260102
     ],
     "26.2": [
         minecraft             : "26.2",
@@ -54,7 +54,7 @@ ext.targets = [
         xaeroNeoRange         : "[1.41.0,)",
         mixinJava             : "JAVA_25",
         remappedFabric        : false,
-        modernRenderer        : true
+        preprocessorVersion   : 260200
     ],
     "26.3": [
         minecraft             : "26.3",
@@ -71,7 +71,7 @@ ext.targets = [
         xaeroNeoRange         : "[1.46.3,)",
         mixinJava             : "JAVA_25",
         remappedFabric        : false,
-        modernRenderer        : true
+        preprocessorVersion   : 260300
     ]
 ]
 

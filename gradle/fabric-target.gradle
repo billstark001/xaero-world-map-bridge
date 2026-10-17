@@ -20,20 +20,14 @@ configurations {
     }
 }
 
-def sharedJavaSources = [
-    rootProject.file("src/main/java"),
-    rootProject.file("versions/shared-mc-${target.minecraft}/src/main/java"),
-    rootProject.file("versions/fabric-common/src/main/java"),
-    project.file("src/main/java")
-]
-if (target.modernRenderer) {
-    sharedJavaSources.add(1, rootProject.file("versions/shared-modern/src/main/java"))
-}
-
 sourceSets {
     main {
-        java.srcDirs = sharedJavaSources
-        resources.srcDirs = [rootProject.file("src/main/resources")]
+        java.srcDirs = [
+            rootProject.file("src/main/java"),
+            rootProject.file("src/client/java"),
+            rootProject.file("src/fabric/java")
+        ]
+        resources.srcDirs = [rootProject.file("src/main/resources"), rootProject.file("src/fabric/resources")]
     }
 }
 
@@ -99,8 +93,8 @@ fabricApi {
 }
 
 sourceSets.named("gametest") {
-    java.srcDirs = [rootProject.file("versions/fabric-gametest/src/gametest/java")]
-    resources.srcDirs = [rootProject.file("versions/fabric-gametest/src/gametest/resources")]
+    java.srcDirs = [rootProject.file("src/gametest/java")]
+    resources.srcDirs = [rootProject.file("src/gametest/resources")]
 }
 
 dependencies {
@@ -205,3 +199,5 @@ publishing {
         }
     }
 }
+
+apply from: rootProject.file("gradle/manifold.gradle")

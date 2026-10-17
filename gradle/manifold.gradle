@@ -1,0 +1,13 @@
+def target = rootProject.ext.targets[project.ext.minecraftTarget]
+
+// Manifold runs only in javac; no dependency is added to the mod's runtime.
+dependencies {
+    annotationProcessor "systems.manifold:manifold-preprocessor:${rootProject.manifold_version}"
+}
+
+tasks.named("compileJava", JavaCompile).configure {
+    options.compilerArgs.addAll([
+        "-Xplugin:Manifold",
+        "-AMC_VERSION=${target.preprocessorVersion}"
+    ])
+}
