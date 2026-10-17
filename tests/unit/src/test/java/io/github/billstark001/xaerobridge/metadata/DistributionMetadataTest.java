@@ -14,7 +14,7 @@ class DistributionMetadataTest {
 
     @Test
     void minecraftTargetsMatchXaeroReleaseLines() throws IOException {
-        String build = Files.readString(projectRoot.resolve("build.gradle"));
+        String build = Files.readString(projectRoot.resolve("gradle/targets.gradle"));
 
         assertFalse(build.contains("minecraftRange        : \"~"));
         assertTrue(build.contains("minecraftRange        : \"1.21.11\""));
@@ -28,7 +28,7 @@ class DistributionMetadataTest {
 
     @Test
     void xaeroRangesPermitBestEffortFutureVersions() throws IOException {
-        String build = Files.readString(projectRoot.resolve("build.gradle"));
+        String build = Files.readString(projectRoot.resolve("gradle/targets.gradle"));
         String fabricMetadata = Files.readString(projectRoot.resolve("src/fabric/resources/fabric.mod.json"));
         String neoForgeMetadata = Files.readString(projectRoot.resolve(
                 "src/neoforge/resources/META-INF/neoforge.mods.toml"));

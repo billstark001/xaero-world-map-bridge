@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Generated isolated Fabric and NeoForge build projects from shared target metadata, removing per-version build scripts.
 - Consolidated version-specific Minecraft adapters and Mixin sources using the Manifold preprocessor, with shared loader metadata and unchanged eight-target build outputs.
 
 ## [0.1.2] - 2026-09-19
