@@ -86,10 +86,10 @@ first missing exact hook when map overlays are registered.
 
 | Minecraft release line | Fabric | NeoForge | Guaranteed Xaero World Map releases |
 | --- | --- | --- | --- |
-| 1.21.11 | Yes | Experimental | 1.40--1.46 |
-| 26.1.2 | Yes | Experimental | 1.40--1.46 |
-| 26.2 | Yes | Experimental | 1.41--1.46 |
-| 26.3 | Yes | Experimental | 1.46 |
+| 1.21.11 | Yes | Experimental | 1.40--1.47 |
+| 26.1.2 | Yes | Experimental | 1.40--1.47 |
+| 26.2 | Yes | Experimental | 1.41--1.47 |
+| 26.3 | Yes | Experimental | 1.46--1.47 |
 
 Xaero World Map 1.40 was not published for Minecraft 26.2. Xaero 1.46 is the first release line published for
 Minecraft 26.3.
@@ -208,7 +208,7 @@ Use this script to disassemble a supplied Xaero JAR:
 .\scripts\disassemble-xaero.ps1 -Jar path\to\xaeroworldmap.jar
 ```
 
-It stores `GuiMap.javap.txt` under `build/xaero-inspection`. To verify every published artifact in the guaranteed 1.40--1.46 matrix, run:
+It stores `GuiMap.javap.txt` under `build/xaero-inspection`. To verify every published artifact in the guaranteed 1.40--1.47 matrix, run:
 
 ```powershell
 .\scripts\verify-xaero-artifacts.ps1

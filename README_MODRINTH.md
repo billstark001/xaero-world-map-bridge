@@ -25,10 +25,10 @@ It is a client-only dependency. It does not need to be installed on a dedicated 
 
 | Minecraft release line | Fabric | NeoForge | Guaranteed Xaero's World Map releases |
 | --- | --- | --- | --- |
-| 1.21.11 | Yes | Experimental | 1.40--1.46 |
-| 26.1.2 | Yes | Experimental | 1.40--1.46 |
-| 26.2 | Yes | Experimental | 1.41--1.46 |
-| 26.3 | Yes | Experimental | 1.46 |
+| 1.21.11 | Yes | Experimental | 1.40--1.47 |
+| 26.1.2 | Yes | Experimental | 1.40--1.47 |
+| 26.2 | Yes | Experimental | 1.41--1.47 |
+| 26.3 | Yes | Experimental | 1.46--1.47 |
 
 Xaero's World Map 1.40 was not released for Minecraft 26.2. Xaero 1.46 is the first release line published for Minecraft 26.3.
 

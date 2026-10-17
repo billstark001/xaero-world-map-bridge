@@ -9,6 +9,7 @@ config="xaero-world-map-bridge.mixins.json"
 modId="xaero_world_map_bridge"
 version="${version}"
 displayName="Xaero World Map Bridge"
+logoFile="assets/xaero_world_map_bridge/icon.png"
 description='''A small overlay API bridge for Xaero's World Map.'''
 
 [[dependencies.xaero_world_map_bridge]]
