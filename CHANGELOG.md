@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-18
+
+### Added
+
+- A minimal map-and-bridge mod icon shared by the Fabric and NeoForge distributions.
+
+### Changed
+
+- Extended the verified Xaero World Map compatibility matrix through 1.47 and updated all eight build targets to the published 1.47.0 artifacts.
+- Generated isolated Fabric and NeoForge build projects from shared target metadata, removing per-version build scripts.
+- Consolidated version-specific Minecraft adapters and Mixin sources using the Manifold preprocessor, with shared loader metadata and unchanged eight-target build outputs.
+
 ## [0.1.2] - 2026-09-19
 
 ### Added
@@ -57,7 +69,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Automated bytecode verification of the exact injection anchor across every published Xaero artifact in the supported release matrix.
 - Contributor documentation for testing, Conventional Commits, and Keep a Changelog.
 
-[Unreleased]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/billstark001/xaero-world-map-bridge/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/billstark001/xaero-world-map-bridge/releases/tag/v0.1.0
